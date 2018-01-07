@@ -1,6 +1,7 @@
 package com.heyzqt.tvapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +15,10 @@ import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.Row;
+import android.support.v17.leanback.widget.RowPresenter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -40,6 +44,8 @@ public class MainFragment extends BrowseFragment {
 		setElementUI();
 
 		loadRows();
+
+		setEventListener();
 	}
 
 	@Override
@@ -82,6 +88,19 @@ public class MainFragment extends BrowseFragment {
 		rowsAdapter.add(new ListRow(headerItem, gridItemAdapter));
 		rowsAdapter.add(new ListRow(secondItem, gridItemAdapter));
 		setAdapter(rowsAdapter);
+	}
+
+	private void setEventListener() {
+		setOnItemViewClickedListener(new OnItemClickListener());
+	}
+
+	public class OnItemClickListener implements OnItemViewClickedListener {
+
+		@Override
+		public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
+				RowPresenter.ViewHolder rowViewHolder, Row row) {
+			startActivity(new Intent(mContext, DetailActivity.class));
+		}
 	}
 
 	public class GridItemAdapter extends Presenter {
