@@ -1,7 +1,11 @@
 package com.heyzqt.tvapplication;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v17.leanback.app.BrowseFragment;
@@ -60,13 +64,20 @@ public class MainFragment extends BrowseFragment {
 		movie1.title = "movie 1";
 		movie1.studio = "studio 1";
 		movie1.description = "description 1";
-		movie1.img = getResources().getDrawable(R.drawable.img1);
+		movie1.resId = R.drawable.img1;
+		Movie movie2 = new Movie();
+		movie2.title = "movie 2";
+		movie2.studio = "studio 2";
+		movie2.description = "description 2";
+		movie2.resId = R.drawable.img2;
+		Movie movie3 = new Movie();
+		movie3.title = "movie 3";
+		movie3.studio = "studio 3";
+		movie3.description = "description 3";
+		movie3.resId = R.drawable.img3;
 		gridItemAdapter.add(movie1);
-		gridItemAdapter.add(movie1);
-		gridItemAdapter.add(movie1);
-//		gridItemAdapter.add("item 1");
-//		gridItemAdapter.add("item 2");
-//		gridItemAdapter.add("item 3");
+		gridItemAdapter.add(movie2);
+		gridItemAdapter.add(movie3);
 
 		rowsAdapter.add(new ListRow(headerItem, gridItemAdapter));
 		rowsAdapter.add(new ListRow(secondItem, gridItemAdapter));
@@ -77,12 +88,6 @@ public class MainFragment extends BrowseFragment {
 
 		@Override
 		public ViewHolder onCreateViewHolder(ViewGroup parent) {
-//			TextView textView = new TextView(parent.getContext());
-//			textView.setHeight(CARD_HEIGHT);
-//			textView.setWidth(CARD_WIDTH);
-//			textView.setBackgroundColor(Color.GRAY);
-//			textView.setFocusable(true);
-//			textView.setGravity(Gravity.CENTER);
 			ImageCardView cardView = new ImageCardView(parent.getContext());
 			cardView.setMinimumWidth(CARD_WIDTH);
 			cardView.setMinimumHeight(CARD_HEIGHT);
@@ -92,12 +97,14 @@ public class MainFragment extends BrowseFragment {
 
 		@Override
 		public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-//			TextView textView = (TextView) viewHolder.view;
-//			textView.setText(item.toString());
-
 			final Movie movie = (Movie) item;
 			ImageCardView cardView = (ImageCardView) viewHolder.view;
-			cardView.setMainImage(movie.img);
+
+			//set the image to a 300x200 bitmap
+			Bitmap bitmap = decodeImageToBitmap(mContext.getResources(), movie.resId, CARD_WIDTH,
+					CARD_HEIGHT);
+
+			cardView.setMainImage(new BitmapDrawable(mContext.getResources(), bitmap));
 			cardView.setTitleText(movie.title);
 			cardView.setContentText(movie.studio);
 
@@ -112,6 +119,35 @@ public class MainFragment extends BrowseFragment {
 		@Override
 		public void onUnbindViewHolder(ViewHolder viewHolder) {
 
+		}
+
+		private Bitmap decodeImageToBitmap(Resources res, int resId, int reqWidth, int
+				reqHeight) {
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			BitmapFactory.decodeResource(res, resId, options);
+
+			int sample = getDecodeSample(options, reqWidth, reqHeight);
+			options.inSampleSize = sample;
+			options.inJustDecodeBounds = false;
+
+			return BitmapFactory.decodeResource(res, resId, options);
+		}
+
+		private int getDecodeSample(BitmapFactory.Options options, int reqWidth,
+				int reqHeight) {
+			int height = options.outHeight;
+			int width = options.outWidth;
+			int sample = 1;
+
+			int halfHeight = height / 2;
+			int halfWidth = width / 2;
+
+			while ((halfHeight / sample > reqHeight) && (halfWidth / sample > reqWidth)) {
+				sample *= 2;
+			}
+
+			return sample;
 		}
 	}
 }

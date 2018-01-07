@@ -1,7 +1,5 @@
 package com.heyzqt.tvapplication.entity;
 
-import android.graphics.drawable.Drawable;
-
 /**
  * Created by heyzqt on 1/7/2018.
  */
@@ -12,5 +10,5 @@ public class Movie {
 	public String title;
 	public String studio;
 	public String description;
-	public Drawable img;
+	public int resId;
 }
